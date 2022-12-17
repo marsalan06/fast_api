@@ -1,0 +1,70 @@
+mostly as flask
+pip install fastapi (framework)
+pip install uvicorn (server)
+
+the structure of the code is same as flask
+import fastapi, create app object, use decorator for route
+and define funtion in it 
+
+to run the service use the uvicorn servier and 
+provide the name of the file , use : , and name of the fastapi object
+and if in debug mode add --reload
+
+uvicorn working:app --reload
+
+if we go to ip:server/docs , it loads the automatice documentation
+and an interface like postman
+
+we can create a get request just like in flask, with query parameters and 
+defining there types
+
+@app.get("/get-item/{item_id}")
+def get_item(item_id: int):
+    return inventory[item_id]
+
+using the path property in the method a description and default value can be given to the method
+suggested by fastapi to use 
+
+from typing import Optional
+
+so the def becomes
+
+@app.get("/get-by-name")
+def get_item(name: Optional[str] = None):
+    for item in inventory:
+        if inventory[item]["name"] == name:
+            return inventory[item]
+    return {"Data" : "No Match Found"}
+
+if args are required and Optional both right the required arg first
+def get_item(test: int , name: Optional[str] = None):
+
+or
+
+def get_item(*, name: Optional[str] = None,test: int):
+this line means the positional args can be unlimited and kwargs are given,
+so the url can be 
+--> http://127.0.0.1:8000/get-by-name?test=1&name=Milk
+
+
+Base modals are json objects, pydantic allows to create such base modal that can
+create objects to be saved,
+
+class Item(BaseModel):
+    name: str
+    price: float
+    brand: Optional[str] = None
+
+def create_item(item_id:int,item:Item):
+
+
+class UpdateItem(BaseModel):
+    name: Optional[str] = None
+    price: Optional[float] = None
+    brand: Optional[str] = None
+
+so the fist class is item and the second one is to update where everything is made Optional
+def update_item(item_id:int, item:UpdateItem):
+
+while sending data in body avoid ending commas, it will create error
+we can use status code to send with response
